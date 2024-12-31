@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        td {
+            width: 125px;
+            height: 125px;
+        }
+
+        img {
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            margin-left: auto;
+
+            margin-right: auto;
+        }
+
+        #navbar {
+            text-align: center;
+        }
+#navbar > * {
+    display: inline-block;
+    margin: 30px;
+}
+#input-game {
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+    <div id="navbar" style="display: none"></div>
+    <div id="button-game">
+    <table>
+        <tbody>
+        <tr>
+            <td id="td1"></td>
+            <td id="td2"></td>
+            <td id="td3"></td>
+        </tr>
+        <tr>
+            <td id="td4"></td>
+            <td id="td5"></td>
+            <td id="td6"></td>
+        </tr>
+        <tr>
+            <td id="td7"></td>
+            <td id="td8"></td>
+            <td id="td9"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td id="td0"></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+    <div id="image-game" style="display: none">
+        <img id="right" src="right.jpg" height="400" width="400" style="z-index: 3;">
+        <img id="stop" src="stop.jpg" height="400" width="400" style="z-index:2;">
+        <img id="phone" src="phone.jpg" height="400" width="400" style="z-index:1;">
+    </div>
+    <div id="input-game" style="display: none">
+        <select onchange="checkorder()">
+            <option>Gavin</option>
+            <option>Bonnie</option>
+            <option>Winnie</option>
+            <option>Gregory</option>
+            <option>Richard</option>
+            <option>Patrick</option>
+        </select>
+        <select onchange="checkorder()">
+            <option>Gavin</option>
+            <option>Bonnie</option>
+            <option>Winnie</option>
+            <option>Gregory</option>
+            <option>Richard</option>
+            <option>Patrick</option>
+        </select>
+        <select onchange="checkorder()">
+            <option>Gavin</option>
+            <option>Bonnie</option>
+            <option>Winnie</option>
+            <option>Gregory</option>
+            <option>Richard</option>
+            <option>Patrick</option>
+        </select>
+        <select onchange="checkorder()">
+            <option>Gavin</option>
+            <option>Bonnie</option>
+            <option>Winnie</option>
+            <option>Gregory</option>
+            <option>Richard</option>
+            <option>Patrick</option>
+        </select>
+        <select onchange="checkorder()">
+            <option>Gavin</option>
+            <option>Bonnie</option>
+            <option>Winnie</option>
+            <option>Gregory</option>
+            <option>Richard</option>
+            <option>Patrick</option>
+        </select>
+        <span style="background-color:white">Brodrick</span>
+        <select onchange="checkorder()">
+            <option>Gavin</option>
+            <option>Bonnie</option>
+            <option>Winnie</option>
+            <option>Gregory</option>
+            <option>Richard</option>
+            <option>Patrick</option>
+        </select>
+    </div>
+    <div id="code-game" style="display: none">
+    </div>
+</body>
+<script>
+    const state = localStorage.getItem('gamestate');
+    let oldGame = {};
+    if (state) {
+        oldGame = JSON.parse(state);
+    }
+    const stopImage = document.getElementById("stop");
+    let stopTimeout;
+    let mouseInsideStop = false;
+    stopImage.onmouseenter = function () {
+        mouseInsideStop = true;
+    }
+    stopImage.onmouseleave = function () {
+        mouseInsideStop = false;
+        clearTimeout(stopTimeout);
+    }
+
+    document.onmousemove = function () {
+        if (mouseInsideStop) {
+            clearTimeout(stopTimeout);
+            stopTimeout = setTimeout(function() {
+                imageNumber = 2;
+                document.getElementById('stop').remove();
+                save();
+    alert("Time to give you another room!");
+            }, 5000)
+        }
+    }
+
+
+    const navbar = document.getElementById("navbar");
+    const buttonGame = document.getElementById("button-game");
+    const imageGame = document.getElementById("image-game");
+    const inputGame = document.getElementById("input-game");
+    const buttonGameLink = document.createElement("a");
+    buttonGameLink.textContent = "Button";
+    buttonGameLink.href = "#";
+    buttonGameLink.onclick = function (event) {
+        event.preventDefault();
+        showButtonGame();
+    }
+    const imageGameLink = document.createElement("a");
+    imageGameLink.textContent = "Image";
+    imageGameLink.href = "#";
+    imageGameLink.onclick = function (event) {
+        event.preventDefault();
+        showImageGame();
+    }
+
+    const inputGameLink = document.createElement("a");
+    inputGameLink.textContent = "Inputs";
+    inputGameLink.href = "#";
+    inputGameLink.onclick = function (event) {
+        event.preventDefault();
+        showInputGame();
+    }
+
+    console.log({oldGame})
+    let currentTab = oldGame.currentTab || "button";
+    let jumpCount = oldGame.jumpCount || 0;
+    let colorCount = oldGame.colorCount || 0;
+    let imageNumber = oldGame.imageNumber || 0;
+    if (jumpCount >= 20) {
+        stage2();
+        if (imageNumber === 2) {
+            stage3();
+        }
+    }
+
+    const colors = ["blue", "red", "green", "gray", "pink","black","white"];
+    const path = ["td2", "td0", "td7", "td9", "td3", "td4", "td5"];
+
+    const button = document.createElement("button");
+    button.textContent = 'Click me to exit!';
+    button.style.height = '125px';
+    button.style.width = '125px';
+
+    window.onkeyup = function(event) {
+        if (event.keyCode === 39 && currentTab === 'image' && imageNumber === 0){
+            const right = document.getElementById('right');
+            right.remove();
+            imageNumber = 1;
+            save();
+        }
+    }
+
+    // Set initial settings
+    if (imageNumber === 1) {
+        document.getElementById('right').remove();
+    } else if (imageNumber === 2) {
+        document.getElementById('right').remove();
+        document.getElementById('stop').remove();
+    }
+    switch (currentTab) {
+        case "button":
+            showButtonGame();
+            break;
+        case "image":
+            showImageGame();
+            break;
+        case "input":
+            showInputGame();
+            break;
+    }
+    document.getElementById(path[jumpCount % path.length]).appendChild(button);
+    document.body.style.backgroundColor = colors[colorCount % colors.length];
+
+    button.onmouseover = function () {
+        setBackgroundAndButtonPosition();
+
+        if (jumpCount === 12) {
+            alert("You may have realized by now, but the button may not be the best way.");
+        }
+
+        if (jumpCount === 20) {
+            alert("You sure are persistent though!");
+            if (confirm("Do you want a different way out?")) {
+                alert("Fantastic! Check out the new image for more info on how to get out of this website!");
+            } else {
+                alert("I'm going to ignore your request and give you a better way :)");
+            }
+            stage2();
+        }
+    };
+
+    function stage2() {
+       navbar.append(buttonGameLink, imageGameLink);
+       navbar.style.display = '';
+    }
+
+    function stage3() {
+       navbar.appendChild(inputGameLink);
+    }
+
+
+function setBackgroundAndButtonPosition() {
+    const curr = path[jumpCount % path.length];
+    jumpCount += 1;
+    const next = path[jumpCount % path.length];
+
+    document.getElementById(curr).removeChild(button);
+    document.getElementById(next).appendChild(button);
+    if (Math.random() < 0.25 || jumpCount % 10 === 0) {
+        colorCount += 1;
+        const color = colors[colorCount % colors.length];
+        document.body.style.backgroundColor = color;
+    }
+
+    save();
+}
+
+function showImageGame(event) {
+    if (event) {
+        event.preventDefault();
+    }
+    buttonGame.style.display = 'none';
+    buttonGameLink.style.border = '';
+    imageGame.style.display = '';
+    imageGameLink.style.border = '1px solid black';
+    inputGame.style.display = 'none';
+    inputGameLink.style.border = '';
+    currentTab = "image";
+    save();
+}
+
+function showButtonGame(event) {
+    if (event) {
+        event.preventDefault();
+    }
+    buttonGame.style.display = '';
+    buttonGameLink.style.border = '1px solid black';
+    imageGame.style.display = 'none';
+    imageGameLink.style.border = '';
+    inputGame.style.display = 'none';
+    inputGameLink.style.border = '';
+    currentTab = "button";
+    
+    save();
+}
+
+
+function showInputGame(event) {
+    if (event) {
+        event.preventDefault();
+    }
+    buttonGame.style.display = 'none';
+    buttonGameLink.style.border = '';
+    imageGame.style.display = 'none';
+    imageGameLink.style.border = '';
+    inputGame.style.display = '';
+    inputGameLink.style.border = '1px solid black';
+    currentTab = "input";
+    
+    save();
+}
+function save() {
+    localStorage.setItem('gamestate', JSON.stringify({
+        jumpCount, colorCount, currentTab, imageNumber
+    }));
+}
+function checkorder() {
+    const vals = [...inputGame.children].filter(n => n.tagName.toLowerCase() === 'select').map(n => n.value);
+    if (vals[0] === 'Bonnie' && vals[1] === "Richard" && vals[2] === "Gavin" && vals[3] === "Gregory" && vals[4] === "Patrick" && vals[5] === "Winnie") {
+        alert('you win!')
+    }
+}
+
+</script>
+</html>
